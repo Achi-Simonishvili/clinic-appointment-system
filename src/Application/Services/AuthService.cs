@@ -1,3 +1,4 @@
+using ClinicSystem.Application.Common.Exceptions;
 using ClinicSystem.Application.DTOs.Auth;
 using ClinicSystem.Application.Interfaces;
 using ClinicSystem.Domain.Entities;
@@ -8,12 +9,14 @@ namespace ClinicSystem.Application.Services;
 public class AuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IPatientRepository _patientRepository;
     private readonly IJwtService _jwtService;
     private readonly IPasswordHasher _passwordHasher;
 
-    public AuthService(IUserRepository userRepository, IJwtService jwtService, IPasswordHasher passwordHasher)
+    public AuthService(IUserRepository userRepository, IPatientRepository patientRepository, IJwtService jwtService, IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
+        _patientRepository = patientRepository;
         _jwtService = jwtService;
         _passwordHasher = passwordHasher;
     }
@@ -21,7 +24,7 @@ public class AuthService
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
         if (await _userRepository.EmailExistsAsync(request.Email))
-            throw new Exception("Email already in use.");
+            throw new BadRequestException("Email already in use.");
 
         var user = new AppUser
         {
@@ -34,7 +37,17 @@ public class AuthService
         };
 
         await _userRepository.AddAsync(user);
-        await _userRepository.SaveChangesAsync();
+        await _userRepository.SaveAsync();
+
+        var patient = new Patient
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            User = user
+        };
+
+        await _patientRepository.AddAsync(patient);
+        await _patientRepository.SaveAsync();
 
         return new AuthResponse
         {
@@ -47,10 +60,11 @@ public class AuthService
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Email);
+        var user = await _userRepository.GetByEmailAsync(request.Email)
+            ?? throw new BadRequestException("Invalid email or password.");
 
-        if (user == null || !_passwordHasher.Verify(request.Password, user.PasswordHash))
-            throw new Exception("Invalid email or password.");
+        if (!_passwordHasher.Verify(request.Password, user.PasswordHash))
+            throw new BadRequestException("Invalid email or password.");
 
         return new AuthResponse
         {

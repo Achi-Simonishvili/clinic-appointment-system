@@ -5,27 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicSystem.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository : RepositoryBase<AppUser>, IUserRepository
 {
-    private readonly AppDbContext _context;
-
-    public UserRepository(AppDbContext context)
-    {
-        _context = context;
-    }
+    public UserRepository(AppDbContext context) : base(context) { }
 
     public async Task<AppUser?> GetByEmailAsync(string email) =>
-        await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-    public async Task<AppUser?> GetByIdAsync(Guid id) =>
-        await _context.Users.FindAsync(id);
+        await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
 
     public async Task<bool> EmailExistsAsync(string email) =>
-        await _context.Users.AnyAsync(u => u.Email == email);
-
-    public async Task AddAsync(AppUser user) =>
-        await _context.Users.AddAsync(user);
-
-    public async Task SaveChangesAsync() =>
-        await _context.SaveChangesAsync();
+        await _dbSet.AnyAsync(u => u.Email == email);
 }
