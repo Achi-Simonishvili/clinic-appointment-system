@@ -10,6 +10,8 @@ public static class ApplicationServiceExtension
         services.AddScoped<AuthService>();
         services.AddScoped<DoctorService>();
         services.AddScoped<PatientService>();
+        services.AddScoped<SpecializationService>();
+        services.AddScoped<DepartmentService>();
 
         return services;
     }

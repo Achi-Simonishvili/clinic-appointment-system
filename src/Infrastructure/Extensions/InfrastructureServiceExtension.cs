@@ -14,16 +14,15 @@ public static class InfrastructureServiceExtension
         this IServiceCollection services,
         IConfiguration config)
     {
-        // Database
         services.AddDbContext<AppDbContext>(opt =>
             opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
-        // Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IDoctorRepository, DoctorRepository>();
         services.AddScoped<IPatientRepository, PatientRepository>();
+        services.AddScoped<ISpecializationRepository, SpecializationRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
-        // Services
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
