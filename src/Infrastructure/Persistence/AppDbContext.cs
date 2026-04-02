@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<Specialization> Specializations => Set<Specialization>();
     public DbSet<Department> Departments => Set<Department>();
+    public DbSet<DoctorAvailability> DoctorAvailabilities => Set<DoctorAvailability>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -71,6 +72,17 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<DoctorAvailability>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Doctor)
+                  .WithMany()
+                  .HasForeignKey(e => e.DoctorId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.Property(e => e.DayOfWeek).IsRequired();
+            entity.Property(e => e.SlotDurationMinutes).IsRequired();
         });
     }
 }
