@@ -10,6 +10,8 @@ public class AppDbContext : DbContext
     public DbSet<AppUser> Users => Set<AppUser>();
     public DbSet<Doctor> Doctors => Set<Doctor>();
     public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<Specialization> Specializations => Set<Specialization>();
+    public DbSet<Department> Departments => Set<Department>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,9 +32,15 @@ public class AppDbContext : DbContext
                   .WithOne()
                   .HasForeignKey<Doctor>(e => e.UserId)
                   .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Specialization)
+                  .WithMany(s => s.Doctors)
+                  .HasForeignKey(e => e.SpecializationId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Department)
+                  .WithMany(d => d.Doctors)
+                  .HasForeignKey(e => e.DepartmentId)
+                  .OnDelete(DeleteBehavior.Restrict);
             entity.Property(e => e.LicenseNumber).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Specialization).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Department).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.Bio).HasMaxLength(500);
         });
@@ -49,6 +57,20 @@ public class AppDbContext : DbContext
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.EmergencyContactName).HasMaxLength(100);
             entity.Property(e => e.EmergencyContactPhone).HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<Specialization>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<Department>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
         });
     }
 }

@@ -11,18 +11,33 @@ public class DoctorService
     private readonly IDoctorRepository _doctorRepository;
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly ISpecializationRepository _specializationRepository;
+    private readonly IDepartmentRepository _departmentRepository;
 
-    public DoctorService(IDoctorRepository doctorRepository, IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public DoctorService(
+        IDoctorRepository doctorRepository,
+        IUserRepository userRepository,
+        IPasswordHasher passwordHasher,
+        ISpecializationRepository specializationRepository,
+        IDepartmentRepository departmentRepository)
     {
         _doctorRepository = doctorRepository;
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _specializationRepository = specializationRepository;
+        _departmentRepository = departmentRepository;
     }
 
     public async Task<DoctorDto> CreateAsync(CreateDoctorRequest request)
     {
         if (await _userRepository.EmailExistsAsync(request.Email))
             throw new BadRequestException("Email already in use.");
+
+        var specialization = await _specializationRepository.GetAsync(s => s.Id == request.SpecializationId)
+            ?? throw new NotFoundException("Specialization not found.");
+
+        var department = await _departmentRepository.GetAsync(d => d.Id == request.DepartmentId)
+            ?? throw new NotFoundException("Department not found.");
 
         var user = new AppUser
         {
@@ -44,8 +59,10 @@ public class DoctorService
             User = user,
             LicenseNumber = request.LicenseNumber,
             Bio = request.Bio,
-            Specialization = request.Specialization,
-            Department = request.Department,
+            SpecializationId = request.SpecializationId,
+            Specialization = specialization,
+            DepartmentId = request.DepartmentId,
+            Department = department,
             PhoneNumber = request.PhoneNumber
         };
 
@@ -57,12 +74,21 @@ public class DoctorService
 
     public async Task<DoctorDto> UpdateAsync(Guid id, UpdateDoctorRequest request)
     {
-        var doctor = await _doctorRepository.GetAsync(d => d.Id == id, includeProperties: "User")
+        var doctor = await _doctorRepository.GetAsync(
+            d => d.Id == id, includeProperties: "User,Specialization,Department")
             ?? throw new NotFoundException("Doctor not found.");
 
+        var specialization = await _specializationRepository.GetAsync(s => s.Id == request.SpecializationId)
+            ?? throw new NotFoundException("Specialization not found.");
+
+        var department = await _departmentRepository.GetAsync(d => d.Id == request.DepartmentId)
+            ?? throw new NotFoundException("Department not found.");
+
         doctor.Bio = request.Bio;
-        doctor.Specialization = request.Specialization;
-        doctor.Department = request.Department;
+        doctor.SpecializationId = request.SpecializationId;
+        doctor.Specialization = specialization;
+        doctor.DepartmentId = request.DepartmentId;
+        doctor.Department = department;
         doctor.PhoneNumber = request.PhoneNumber;
 
         _doctorRepository.Update(doctor);
@@ -73,7 +99,8 @@ public class DoctorService
 
     public async Task<DoctorDto> GetByIdAsync(Guid id)
     {
-        var doctor = await _doctorRepository.GetAsync(d => d.Id == id, includeProperties: "User")
+        var doctor = await _doctorRepository.GetAsync(
+            d => d.Id == id, includeProperties: "User,Specialization,Department")
             ?? throw new NotFoundException("Doctor not found.");
 
         return MapToDto(doctor);
@@ -81,7 +108,8 @@ public class DoctorService
 
     public async Task<List<DoctorDto>> GetAllAsync()
     {
-        var (doctors, _) = await _doctorRepository.GetAllAsync(includeProperties: "User");
+        var (doctors, _) = await _doctorRepository.GetAllAsync(
+            includeProperties: "User,Specialization,Department");
         return doctors.Select(MapToDto).ToList();
     }
 
@@ -93,8 +121,10 @@ public class DoctorService
         Email = doctor.User.Email,
         LicenseNumber = doctor.LicenseNumber,
         Bio = doctor.Bio,
-        Specialization = doctor.Specialization,
-        Department = doctor.Department,
+        SpecializationId = doctor.SpecializationId,
+        SpecializationName = doctor.Specialization.Name,
+        DepartmentId = doctor.DepartmentId,
+        DepartmentName = doctor.Department.Name,
         PhoneNumber = doctor.PhoneNumber,
         IsActive = doctor.IsActive
     };

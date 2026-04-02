@@ -8,8 +8,10 @@ public class DoctorDto
     public string Email { get; set; } = string.Empty;
     public string LicenseNumber { get; set; } = string.Empty;
     public string Bio { get; set; } = string.Empty;
-    public string Specialization { get; set; } = string.Empty;
-    public string Department { get; set; } = string.Empty;
+    public Guid SpecializationId { get; set; }
+    public string SpecializationName { get; set; } = string.Empty;
+    public Guid DepartmentId { get; set; }
+    public string DepartmentName { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public bool IsActive { get; set; }
 }
