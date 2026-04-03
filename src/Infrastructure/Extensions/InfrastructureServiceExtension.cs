@@ -23,6 +23,7 @@ public static class InfrastructureServiceExtension
         services.AddScoped<ISpecializationRepository, SpecializationRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IDoctorAvailabilityRepository, DoctorAvailabilityRepository>();
+        services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
