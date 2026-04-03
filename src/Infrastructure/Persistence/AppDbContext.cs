@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Specialization> Specializations => Set<Specialization>();
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<DoctorAvailability> DoctorAvailabilities => Set<DoctorAvailability>();
+    public DbSet<Appointment> Appointments => Set<Appointment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,6 +84,21 @@ public class AppDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
             entity.Property(e => e.DayOfWeek).IsRequired();
             entity.Property(e => e.SlotDurationMinutes).IsRequired();
+        });
+
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Patient)
+                  .WithMany()
+                  .HasForeignKey(e => e.PatientId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Doctor)
+                  .WithMany()
+                  .HasForeignKey(e => e.DoctorId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.Notes).HasMaxLength(500);
         });
     }
 }
