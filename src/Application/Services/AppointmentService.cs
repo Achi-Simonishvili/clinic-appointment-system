@@ -93,6 +93,41 @@ public class AppointmentService
         return appointments.Select(MapToDto).ToList();
     }
 
+    public async Task<AppointmentDto> UpdateStatusAsync(Guid id, UpdateAppointmentStatusRequest request)
+    {
+        var appointment = await _appointmentRepository.GetAsync(
+            a => a.Id == id, includeProperties: "Patient.User,Doctor.User")
+            ?? throw new NotFoundException("Appointment not found.");
+
+        if (!Enum.TryParse<AppointmentStatus>(request.Status, true, out var newStatus))
+            throw new BadRequestException("Invalid status. Valid values: Pending, Confirmed, Completed, Cancelled.");
+
+        // Validate status transitions
+        var validTransitions = new Dictionary<AppointmentStatus, List<AppointmentStatus>>
+        {
+            { AppointmentStatus.Pending, new List<AppointmentStatus> { AppointmentStatus.Confirmed, AppointmentStatus.Cancelled } },
+            { AppointmentStatus.Confirmed, new List<AppointmentStatus> { AppointmentStatus.Completed, AppointmentStatus.Cancelled } },
+            { AppointmentStatus.Completed, new List<AppointmentStatus>() },
+            { AppointmentStatus.Cancelled, new List<AppointmentStatus>() }
+        };
+
+        if (!validTransitions[appointment.Status].Contains(newStatus))
+            throw new BadRequestException($"Cannot transition from {appointment.Status} to {newStatus}.");
+
+        appointment.Status = newStatus;
+        _appointmentRepository.Update(appointment);
+        await _appointmentRepository.SaveAsync();
+
+        return MapToDto(appointment);
+    }
+
+    public async Task<List<AppointmentDto>> GetAllAsync()
+    {
+        var (appointments, _) = await _appointmentRepository.GetAllAsync(
+            includeProperties: "Patient.User,Doctor.User");
+        return appointments.Select(MapToDto).ToList();
+    }
+
     private static AppointmentDto MapToDto(Appointment a) => new()
     {
         Id = a.Id,

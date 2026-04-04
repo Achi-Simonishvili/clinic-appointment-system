@@ -49,4 +49,20 @@ public class AppointmentsController : ControllerBase
         var result = await _appointmentService.GetByPatientIdAsync(patientId);
         return Ok(result);
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAll()
+    {
+        var result = await _appointmentService.GetAllAsync();
+        return Ok(result);
+    }
+
+    [HttpPatch("{id}/status")]
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateAppointmentStatusRequest request)
+    {
+        var result = await _appointmentService.UpdateStatusAsync(id, request);
+        return Ok(result);
+    }
 }
