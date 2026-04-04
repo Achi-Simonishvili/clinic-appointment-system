@@ -14,6 +14,7 @@ public static class ApplicationServiceExtension
         services.AddScoped<DepartmentService>();
         services.AddScoped<DoctorAvailabilityService>();
         services.AddScoped<AppointmentService>();
+        services.AddScoped<MedicalRecordService>();
 
         return services;
     }
