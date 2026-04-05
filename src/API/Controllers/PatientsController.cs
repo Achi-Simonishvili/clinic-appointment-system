@@ -40,4 +40,12 @@ public class PatientsController : ControllerBase
         var patient = await _patientService.UpdateAsync(id, request);
         return Ok(patient);
     }
+
+    [HttpGet("{patientId}/history")]
+    [Authorize(Roles = "Admin,Doctor,Patient")]
+    public async Task<IActionResult> GetHistory(Guid patientId)
+    {
+        var result = await _patientService.GetHistoryAsync(patientId);
+        return Ok(result);
+    }
 }
