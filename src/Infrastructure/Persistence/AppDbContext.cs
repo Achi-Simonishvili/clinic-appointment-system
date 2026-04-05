@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<DoctorAvailability> DoctorAvailabilities => Set<DoctorAvailability>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
+    public DbSet<Prescription> Prescriptions => Set<Prescription>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -120,6 +121,27 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Diagnosis).IsRequired().HasMaxLength(500);
             entity.Property(e => e.Symptoms).HasMaxLength(500);
             entity.Property(e => e.Notes).HasMaxLength(1000);
+        });
+
+        modelBuilder.Entity<Prescription>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Patient)
+                  .WithMany()
+                  .HasForeignKey(e => e.PatientId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Doctor)
+                  .WithMany()
+                  .HasForeignKey(e => e.DoctorId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.MedicalRecord)
+                  .WithMany()
+                  .HasForeignKey(e => e.MedicalRecordId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.MedicationName).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Dosage).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Frequency).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Instructions).HasMaxLength(500);
         });
     }
 }
