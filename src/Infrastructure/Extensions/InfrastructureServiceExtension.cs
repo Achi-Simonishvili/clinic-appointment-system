@@ -29,6 +29,7 @@ public static class InfrastructureServiceExtension
 
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IEmailService, EmailService>();
 
         return services;
     }
