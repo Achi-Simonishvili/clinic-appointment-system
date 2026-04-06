@@ -1,0 +1,17 @@
+namespace ClinicSystem.Application.DTOs.Doctor;
+
+public class DoctorDto
+{
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string LicenseNumber { get; set; } = string.Empty;
+    public string Bio { get; set; } = string.Empty;
+    public Guid SpecializationId { get; set; }
+    public string SpecializationName { get; set; } = string.Empty;
+    public Guid DepartmentId { get; set; }
+    public string DepartmentName { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+}
