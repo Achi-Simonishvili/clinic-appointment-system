@@ -52,9 +52,9 @@ public class AppointmentsController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] AppointmentFilterRequest filter)
     {
-        var result = await _appointmentService.GetAllAsync();
+        var result = await _appointmentService.GetAllFilteredAsync(filter);
         return Ok(result);
     }
 

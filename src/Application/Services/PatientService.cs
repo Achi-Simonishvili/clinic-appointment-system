@@ -5,6 +5,7 @@ using ClinicSystem.Application.DTOs.Patient;
 using ClinicSystem.Application.DTOs.Prescription;
 using ClinicSystem.Application.Interfaces;
 using ClinicSystem.Domain.Entities;
+using ClinicSystem.Application.DTOs.Common;
 
 namespace ClinicSystem.Application.Services;
 
@@ -114,6 +115,30 @@ public class PatientService
                 Instructions = p.Instructions,
                 CreatedAt = p.CreatedAt
             }).ToList()
+        };
+    }
+
+    public async Task<PagedResponse<PatientDto>> GetAllFilteredAsync(PatientFilterRequest filter)
+    {
+        var (patients, totalCount) = await _patientRepository.GetAllAsync(
+            filter: p =>
+                string.IsNullOrEmpty(filter.Search) ||
+                p.User.FirstName.Contains(filter.Search) ||
+                p.User.LastName.Contains(filter.Search) ||
+                p.User.Email.Contains(filter.Search),
+            pageNumber: filter.PageNumber,
+            pageSize: filter.PageSize,
+            orderBy: filter.OrderBy,
+            ascending: filter.Ascending,
+            includeProperties: "User"
+        );
+
+        return new PagedResponse<PatientDto>
+        {
+            Items = patients.Select(MapToDto).ToList(),
+            TotalCount = totalCount,
+            PageNumber = filter.PageNumber,
+            PageSize = filter.PageSize
         };
     }
 
