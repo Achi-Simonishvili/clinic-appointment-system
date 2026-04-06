@@ -3,6 +3,7 @@ using ClinicSystem.Application.DTOs.Appointment;
 using ClinicSystem.Application.Interfaces;
 using ClinicSystem.Domain.Entities;
 using ClinicSystem.Domain.Enums;
+using ClinicSystem.Application.DTOs.Common;
 
 namespace ClinicSystem.Application.Services;
 
@@ -126,6 +127,30 @@ public class AppointmentService
         var (appointments, _) = await _appointmentRepository.GetAllAsync(
             includeProperties: "Patient.User,Doctor.User");
         return appointments.Select(MapToDto).ToList();
+    }
+
+    public async Task<PagedResponse<AppointmentDto>> GetAllFilteredAsync(AppointmentFilterRequest filter)
+    {
+        var (appointments, totalCount) = await _appointmentRepository.GetAllAsync(
+            filter: a =>
+                (string.IsNullOrEmpty(filter.Status) ||
+                    a.Status.ToString() == filter.Status) &&
+                (filter.FromDate == null || a.AppointmentDate >= filter.FromDate) &&
+                (filter.ToDate == null || a.AppointmentDate <= filter.ToDate),
+            pageNumber: filter.PageNumber,
+            pageSize: filter.PageSize,
+            orderBy: filter.OrderBy,
+            ascending: filter.Ascending,
+            includeProperties: "Patient.User,Doctor.User"
+        );
+
+        return new PagedResponse<AppointmentDto>
+        {
+            Items = appointments.Select(MapToDto).ToList(),
+            TotalCount = totalCount,
+            PageNumber = filter.PageNumber,
+            PageSize = filter.PageSize
+        };
     }
 
     private static AppointmentDto MapToDto(Appointment a) => new()

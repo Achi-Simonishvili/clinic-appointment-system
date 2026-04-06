@@ -19,10 +19,10 @@ public class DoctorsController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin,Doctor,Patient")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] DoctorFilterRequest filter)
     {
-        var doctors = await _doctorService.GetAllAsync();
-        return Ok(doctors);
+        var result = await _doctorService.GetAllFilteredAsync(filter);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

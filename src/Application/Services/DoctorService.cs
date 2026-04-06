@@ -3,6 +3,7 @@ using ClinicSystem.Application.DTOs.Doctor;
 using ClinicSystem.Application.Interfaces;
 using ClinicSystem.Domain.Entities;
 using ClinicSystem.Domain.Enums;
+using ClinicSystem.Application.DTOs.Common;
 
 namespace ClinicSystem.Application.Services;
 
@@ -111,6 +112,34 @@ public class DoctorService
         var (doctors, _) = await _doctorRepository.GetAllAsync(
             includeProperties: "User,Specialization,Department");
         return doctors.Select(MapToDto).ToList();
+    }
+
+    public async Task<PagedResponse<DoctorDto>> GetAllFilteredAsync(DoctorFilterRequest filter)
+    {
+        var (doctors, totalCount) = await _doctorRepository.GetAllAsync(
+            filter: d =>
+                (string.IsNullOrEmpty(filter.Search) ||
+                    d.User.FirstName.Contains(filter.Search) ||
+                    d.User.LastName.Contains(filter.Search) ||
+                    d.User.Email.Contains(filter.Search)) &&
+                (string.IsNullOrEmpty(filter.Specialization) ||
+                    d.Specialization.Name.Contains(filter.Specialization)) &&
+                (string.IsNullOrEmpty(filter.Department) ||
+                    d.Department.Name.Contains(filter.Department)),
+            pageNumber: filter.PageNumber,
+            pageSize: filter.PageSize,
+            orderBy: filter.OrderBy,
+            ascending: filter.Ascending,
+            includeProperties: "User,Specialization,Department"
+        );
+
+        return new PagedResponse<DoctorDto>
+        {
+            Items = doctors.Select(MapToDto).ToList(),
+            TotalCount = totalCount,
+            PageNumber = filter.PageNumber,
+            PageSize = filter.PageSize
+        };
     }
 
     private static DoctorDto MapToDto(Doctor doctor) => new()
