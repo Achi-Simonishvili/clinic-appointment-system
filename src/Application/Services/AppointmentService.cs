@@ -13,17 +13,20 @@ public class AppointmentService
     private readonly IDoctorRepository _doctorRepository;
     private readonly IPatientRepository _patientRepository;
     private readonly IDoctorAvailabilityRepository _availabilityRepository;
+    private readonly IEmailService _emailService;
 
     public AppointmentService(
         IAppointmentRepository appointmentRepository,
         IDoctorRepository doctorRepository,
         IPatientRepository patientRepository,
-        IDoctorAvailabilityRepository availabilityRepository)
+        IDoctorAvailabilityRepository availabilityRepository,
+        IEmailService emailService)
     {
         _appointmentRepository = appointmentRepository;
         _doctorRepository = doctorRepository;
         _patientRepository = patientRepository;
         _availabilityRepository = availabilityRepository;
+        _emailService = emailService;
     }
 
     public async Task<AppointmentDto> BookAsync(Guid patientId, BookAppointmentRequest request)
@@ -69,6 +72,18 @@ public class AppointmentService
 
         await _appointmentRepository.AddAsync(appointment);
         await _appointmentRepository.SaveAsync();
+
+        // Send confirmation email
+        try
+        {
+            await _emailService.SendBookingConfirmationAsync(
+                patient.User.Email,
+                $"{patient.User.FirstName} {patient.User.LastName}",
+                $"{doctor.User.FirstName} {doctor.User.LastName}",
+                request.AppointmentDate,
+                startTime.ToString("HH:mm"));
+        }
+        catch { /* Don't fail the booking if email fails */ }
 
         return MapToDto(appointment);
     }
@@ -118,6 +133,21 @@ public class AppointmentService
         appointment.Status = newStatus;
         _appointmentRepository.Update(appointment);
         await _appointmentRepository.SaveAsync();
+
+        // Send cancellation email
+        if (newStatus == AppointmentStatus.Cancelled)
+        {
+            try
+            {
+                await _emailService.SendBookingCancellationAsync(
+                    appointment.Patient.User.Email,
+                    $"{appointment.Patient.User.FirstName} {appointment.Patient.User.LastName}",
+                    $"{appointment.Doctor.User.FirstName} {appointment.Doctor.User.LastName}",
+                    appointment.AppointmentDate,
+                    appointment.StartTime.ToString("HH:mm"));
+            }
+            catch { /* Don't fail the status update if email fails */ }
+        }
 
         return MapToDto(appointment);
     }
