@@ -1,0 +1,64 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">
+        <span class="logo-cross"></span>
+      </div>
+      <span class="logo-name">Clinic<span class="logo-accent">Connect</span></span>
+    </div>
+
+    <h2 class="auth-title">Create an account</h2>
+    <p class="auth-subtitle">Start managing your health today</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full name</mat-label>
+        <input matInput formControlName="fullName" placeholder="Giorgi Beridze" />
+        <mat-error *ngIf="form.get('fullName')?.hasError('required')"
+          >Full name is required</mat-error
+        >
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email address</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="you@example.com" />
+        <mat-error *ngIf="form.get('email')?.hasError('required')">Email is required</mat-error>
+        <mat-error *ngIf="form.get('email')?.hasError('email')">Enter a valid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('password')?.hasError('required')"
+          >Password is required</mat-error
+        >
+        <mat-error *ngIf="form.get('password')?.hasError('minlength')"
+          >Minimum 8 characters</mat-error
+        >
+      </mat-form-field>
+
+      <div class="role-note">
+        <mat-icon>info_outline</mat-icon>
+        <span
+          >All new accounts are registered as <strong>Patient</strong>. Doctor accounts are created
+          by an admin.</span
+        >
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button mat-flat-button class="submit-btn" type="submit" [disabled]="loading">
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">Create account</span>
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Already have an account?
+      <a routerLink="/auth/login">Sign in</a>
+    </p>
+  </div>
+</div>
