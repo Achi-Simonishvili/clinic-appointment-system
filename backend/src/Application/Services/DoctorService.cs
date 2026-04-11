@@ -107,6 +107,15 @@ public class DoctorService
         return MapToDto(doctor);
     }
 
+    public async Task<DoctorDto> GetByUserIdAsync(Guid userId)
+    {
+        var doctor = await _doctorRepository.GetAsync(
+            d => d.UserId == userId, includeProperties: "User,Specialization,Department")
+            ?? throw new NotFoundException("Doctor profile not found.");
+
+        return MapToDto(doctor);
+    }
+
     public async Task<List<DoctorDto>> GetAllAsync()
     {
         var (doctors, _) = await _doctorRepository.GetAllAsync(
