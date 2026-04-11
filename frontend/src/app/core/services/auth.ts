@@ -9,6 +9,7 @@ import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.mode
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly tokenKey = 'auth_token';
+  private readonly doctorIdKey = 'doctor_id';
 
   constructor(
     private http: HttpClient,
@@ -16,9 +17,14 @@ export class AuthService {
   ) {}
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, request)
-      .pipe(tap((response) => this.storeToken(response.token)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+      tap((response) => {
+        this.storeToken(response.token);
+        if (response.role === 'Doctor') {
+          this.fetchAndStoreDoctorId();
+        }
+      }),
+    );
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
@@ -29,6 +35,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.doctorIdKey);
     this.router.navigate(['/auth/login']);
   }
 
@@ -49,6 +56,16 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  getDoctorId(): string {
+    return localStorage.getItem(this.doctorIdKey) ?? '';
+  }
+
+  private fetchAndStoreDoctorId(): void {
+    this.http.get<{ id: string }>(`${environment.apiUrl}/doctors/me`).subscribe({
+      next: (doctor) => localStorage.setItem(this.doctorIdKey, doctor.id),
+    });
   }
 
   private storeToken(token: string): void {
