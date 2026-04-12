@@ -1,0 +1,40 @@
+<div class="step-slot">
+  <h2 class="step-title">Choose a date & time</h2>
+  <p class="doctor-name">{{ doctor.fullName }} · {{ doctor.specializationName }}</p>
+
+  <div class="loading" *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div>
+
+  <div *ngIf="!loading">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date</mat-label>
+      <input matInput type="date" [formControl]="dateControl" [min]="today" />
+    </mat-form-field>
+
+    <div class="slots-grid" *ngIf="slots.length > 0">
+      <div
+        class="slot"
+        *ngFor="let slot of slots"
+        [class.selected]="slotControl.value === slot"
+        (click)="slotControl.setValue(slot)"
+      >
+        {{ slot }}
+      </div>
+    </div>
+
+    <div class="no-slots" *ngIf="dateControl.value && slots.length === 0">
+      Doctor is not available on this day.
+    </div>
+  </div>
+
+  <div class="actions">
+    <button mat-stroked-button (click)="back.emit()">Back</button>
+    <button
+      mat-flat-button
+      class="next-btn"
+      [disabled]="!dateControl.value || !slotControl.value"
+      (click)="onNext()"
+    >
+      Next
+    </button>
+  </div>
+</div>

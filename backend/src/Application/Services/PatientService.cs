@@ -54,6 +54,15 @@ public class PatientService
         return MapToDto(patient);
     }
 
+    public async Task<PatientDto> GetByUserIdAsync(Guid userId)
+    {
+        var patient = await _patientRepository.GetAsync(
+            p => p.UserId == userId, includeProperties: "User")
+            ?? throw new NotFoundException("Patient profile not found.");
+
+        return MapToDto(patient);
+    }
+
     public async Task<List<PatientDto>> GetAllAsync()
     {
         var (patients, _) = await _patientRepository.GetAllAsync(includeProperties: "User");

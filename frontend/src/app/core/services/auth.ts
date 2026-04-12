@@ -10,6 +10,7 @@ export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly tokenKey = 'auth_token';
   private readonly doctorIdKey = 'doctor_id';
+  private readonly patientIdKey = 'patient_id';
 
   constructor(
     private http: HttpClient,
@@ -22,6 +23,9 @@ export class AuthService {
         this.storeToken(response.token);
         if (response.role === 'Doctor') {
           this.fetchAndStoreDoctorId();
+        }
+        if (response.role === 'Patient') {
+          this.fetchAndStorePatientId();
         }
       }),
     );
@@ -36,6 +40,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.doctorIdKey);
+    localStorage.removeItem(this.patientIdKey);
     this.router.navigate(['/auth/login']);
   }
 
@@ -65,6 +70,16 @@ export class AuthService {
   private fetchAndStoreDoctorId(): void {
     this.http.get<{ id: string }>(`${environment.apiUrl}/doctors/me`).subscribe({
       next: (doctor) => localStorage.setItem(this.doctorIdKey, doctor.id),
+    });
+  }
+
+  getPatientId(): string {
+    return localStorage.getItem(this.patientIdKey) ?? '';
+  }
+
+  private fetchAndStorePatientId(): void {
+    this.http.get<{ id: string }>(`${environment.apiUrl}/patients/me`).subscribe({
+      next: (patient) => localStorage.setItem(this.patientIdKey, patient.id),
     });
   }
 

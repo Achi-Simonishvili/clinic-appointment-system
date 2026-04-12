@@ -1,0 +1,55 @@
+.step-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 24px;
+  color: #1a1a1a;
+}
+
+.summary-card {
+  border: 0.5px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 0.5px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.label {
+  font-size: 13px;
+  color: #757575;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.error-message {
+  font-size: 13px;
+  color: #d32f2f;
+  margin-bottom: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.confirm-btn {
+  background: #1a6fb4 !important;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,0 +1,50 @@
+<div class="booking-wrapper">
+  <div class="page-header">
+    <h1 class="page-title">Book an appointment</h1>
+    <p class="page-subtitle">Find a doctor and schedule your visit in a few steps</p>
+  </div>
+
+  <div class="stepper">
+    <div
+      class="step"
+      *ngFor="let step of steps; let i = index"
+      [class.active]="i === currentStep"
+      [class.done]="i < currentStep"
+    >
+      <div class="step-circle">
+        <span *ngIf="i >= currentStep">{{ i + 1 }}</span>
+        <span *ngIf="i < currentStep">✓</span>
+      </div>
+      <span class="step-label">{{ step }}</span>
+    </div>
+  </div>
+
+  <div class="step-content">
+    <app-step-doctor *ngIf="currentStep === 0" (doctorSelected)="onDoctorSelected($event)">
+    </app-step-doctor>
+
+    <app-step-slot
+      *ngIf="currentStep === 1"
+      [doctor]="selectedDoctor!"
+      (slotSelected)="onSlotSelected($event)"
+      (back)="goBack()"
+    >
+    </app-step-slot>
+
+    <app-step-confirm
+      *ngIf="currentStep === 2"
+      [doctor]="selectedDoctor!"
+      [date]="selectedDate"
+      [slot]="selectedSlot"
+      (confirmed)="onConfirmed()"
+      (back)="goBack()"
+    >
+    </app-step-confirm>
+
+    <div class="success-card" *ngIf="currentStep === 3">
+      <div class="success-icon">✓</div>
+      <h2>Appointment booked!</h2>
+      <p>Your appointment has been successfully scheduled.</p>
+    </div>
+  </div>
+</div>

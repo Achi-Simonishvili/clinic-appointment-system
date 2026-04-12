@@ -1,0 +1,27 @@
+<div class="step-doctor">
+  <h2 class="step-title">Choose a doctor</h2>
+
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search by name or specialization</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <div class="loading" *ngIf="loading">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <div class="doctor-grid" *ngIf="!loading">
+    <div class="doctor-card" *ngFor="let doctor of doctors" (click)="select(doctor)">
+      <div class="doctor-avatar">{{ doctor.fullName | slice: 0 : 2 | uppercase }}</div>
+      <div class="doctor-info">
+        <div class="doctor-name">{{ doctor.fullName }}</div>
+        <div class="doctor-spec">{{ doctor.specializationName }}</div>
+        <div class="doctor-dept">{{ doctor.departmentName }}</div>
+      </div>
+      <mat-icon class="arrow">chevron_right</mat-icon>
+    </div>
+
+    <div class="empty" *ngIf="doctors.length === 0">No doctors found.</div>
+  </div>
+</div>
