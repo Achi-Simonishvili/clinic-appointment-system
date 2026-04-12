@@ -1,0 +1,32 @@
+<div class="step-confirm">
+  <h2 class="step-title">Confirm your appointment</h2>
+
+  <div class="summary-card">
+    <div class="summary-row">
+      <span class="label">Doctor</span>
+      <span class="value">{{ doctor.fullName }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Specialization</span>
+      <span class="value">{{ doctor.specializationName }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Date</span>
+      <span class="value">{{ date | date: 'fullDate' }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Time</span>
+      <span class="value">{{ slot }}</span>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="actions">
+    <button mat-stroked-button (click)="back.emit()">Back</button>
+    <button mat-flat-button class="confirm-btn" (click)="confirm()" [disabled]="submitting">
+      <mat-spinner diameter="18" *ngIf="submitting"></mat-spinner>
+      <span *ngIf="!submitting">Confirm booking</span>
+    </button>
+  </div>
+</div>

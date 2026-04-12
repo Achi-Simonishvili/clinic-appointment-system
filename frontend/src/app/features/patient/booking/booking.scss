@@ -1,0 +1,129 @@
+.booking-wrapper {
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #757575;
+  margin: 0;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 40px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 36px;
+    right: 0;
+    top: 16px;
+    height: 1px;
+    background: #e0e0e0;
+    z-index: 0;
+  }
+
+  &.done::after {
+    background: #1a6fb4;
+  }
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  background: #fff;
+  color: #bdbdbd;
+  flex-shrink: 0;
+  z-index: 1;
+  position: relative;
+
+  .step.active & {
+    border-color: #1a6fb4;
+    color: #1a6fb4;
+  }
+
+  .step.done & {
+    background: #1a6fb4;
+    border-color: #1a6fb4;
+    color: #fff;
+  }
+}
+
+.step-label {
+  font-size: 13px;
+  color: #bdbdbd;
+
+  .step.active & {
+    color: #1a6fb4;
+    font-weight: 500;
+  }
+  .step.done & {
+    color: #1a1a1a;
+  }
+}
+
+.step-content {
+  background: #fff;
+  border: 0.5px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.success-card {
+  text-align: center;
+  padding: 48px 0;
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e1f5ee;
+    color: #0f6e56;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  p {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+  }
+}

@@ -2,6 +2,7 @@ using ClinicSystem.Application.DTOs.Patient;
 using ClinicSystem.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ClinicSystem.API.Controllers;
 
@@ -30,6 +31,15 @@ public class PatientsController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var patient = await _patientService.GetByIdAsync(id);
+        return Ok(patient);
+    }
+
+    [HttpGet("me")]
+    [Authorize(Roles = "Patient")]
+    public async Task<IActionResult> GetMe()
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var patient = await _patientService.GetByUserIdAsync(userId);
         return Ok(patient);
     }
 
