@@ -1,0 +1,91 @@
+<div class="appointments-wrapper">
+  <div class="page-header">
+    <h1 class="page-title">All Appointments</h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filter by status</mat-label>
+        <mat-select [formControl]="statusFilter">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let s of statuses.slice(1)" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <div class="table-card" *ngIf="!loading">
+    <div class="empty-state" *ngIf="filtered.length === 0">
+      <mat-icon>event_busy</mat-icon>
+      <p>No appointments found</p>
+    </div>
+
+    <table mat-table [dataSource]="filtered" *ngIf="filtered.length > 0">
+      <ng-container matColumnDef="patient">
+        <th mat-header-cell *matHeaderCellDef>Patient</th>
+        <td mat-cell *matCellDef="let row">{{ row.patientName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="doctor">
+        <th mat-header-cell *matHeaderCellDef>Doctor</th>
+        <td mat-cell *matCellDef="let row">{{ row.doctorName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let row">{{ row.appointmentDate | date: 'mediumDate' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let row">{{ row.startTime }} – {{ row.endTime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="status-badge" [ngClass]="row.status.toLowerCase()">
+            {{ row.status }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <div class="action-btns">
+            <button
+              mat-stroked-button
+              class="btn-confirm"
+              *ngIf="canConfirm(row.status)"
+              (click)="updateStatus(row.id, 'Confirmed')"
+            >
+              Confirm
+            </button>
+            <button
+              mat-stroked-button
+              class="btn-complete"
+              *ngIf="canComplete(row.status)"
+              (click)="updateStatus(row.id, 'Completed')"
+            >
+              Complete
+            </button>
+            <button
+              mat-stroked-button
+              class="btn-cancel"
+              *ngIf="canCancel(row.status)"
+              (click)="updateStatus(row.id, 'Cancelled')"
+            >
+              Cancel
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+</div>

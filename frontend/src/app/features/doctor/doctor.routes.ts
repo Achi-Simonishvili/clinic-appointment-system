@@ -6,8 +6,12 @@ export const doctorRoutes: Routes = [
     loadComponent: () => import('./availability/availability').then((m) => m.Availability),
   },
   {
+    path: 'appointments',
+    loadComponent: () => import('./appointments/appointments').then((m) => m.Appointments),
+  },
+  {
     path: '',
-    redirectTo: 'availability',
+    redirectTo: 'appointments',
     pathMatch: 'full',
   },
 ];
