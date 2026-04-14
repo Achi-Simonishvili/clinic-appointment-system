@@ -16,3 +16,7 @@ export interface BookAppointmentRequest {
   appointmentDate: string;
   startTime: string;
 }
+
+export interface UpdateAppointmentStatusRequest {
+  status: string;
+}
