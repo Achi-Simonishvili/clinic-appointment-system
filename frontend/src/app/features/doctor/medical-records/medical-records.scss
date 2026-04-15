@@ -1,0 +1,147 @@
+.records-wrapper {
+  padding: 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #757575;
+  margin: 0;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.form-card {
+  background: #fff;
+  border: 0.5px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+}
+
+.record-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error-message {
+  font-size: 13px;
+  color: #d32f2f;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 42px;
+  margin-top: 8px;
+  background: #1a6fb4 !important;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  color: #bdbdbd;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+.record-card {
+  background: #fff;
+  border: 0.5px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.record-patient {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.record-date {
+  font-size: 12px;
+  color: #9e9e9e;
+}
+
+.record-diagnosis {
+  font-size: 14px;
+  color: #1a6fb4;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.record-detail {
+  font-size: 13px;
+  color: #616161;
+  margin-top: 4px;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #1a1a1a;
+}

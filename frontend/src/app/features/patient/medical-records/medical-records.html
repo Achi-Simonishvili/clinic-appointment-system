@@ -1,0 +1,37 @@
+<div class="records-wrapper">
+  <div class="page-header">
+    <h1 class="page-title">My Medical Records</h1>
+    <p class="page-subtitle">Your visit history and diagnoses from your doctors</p>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && records.length === 0">
+    <mat-icon>description</mat-icon>
+    <p>No medical records yet</p>
+  </div>
+
+  <div class="records-list" *ngIf="!loading && records.length > 0">
+    <div class="record-card" *ngFor="let record of records">
+      <div class="record-header">
+        <div>
+          <div class="record-doctor">Dr. {{ record.doctorName }}</div>
+          <div class="record-date">{{ record.createdAt | date: 'fullDate' }}</div>
+        </div>
+        <span class="diagnosis-badge">{{ record.diagnosis }}</span>
+      </div>
+      <div class="record-body">
+        <div class="record-detail" *ngIf="record.symptoms">
+          <span class="detail-label">Symptoms</span>
+          <span>{{ record.symptoms }}</span>
+        </div>
+        <div class="record-detail" *ngIf="record.notes">
+          <span class="detail-label">Notes</span>
+          <span>{{ record.notes }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
