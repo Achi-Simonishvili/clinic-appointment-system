@@ -10,6 +10,10 @@ export const doctorRoutes: Routes = [
     loadComponent: () => import('./appointments/appointments').then((m) => m.Appointments),
   },
   {
+    path: 'medical-records',
+    loadComponent: () => import('./medical-records/medical-records').then((m) => m.MedicalRecords),
+  },
+  {
     path: '',
     redirectTo: 'appointments',
     pathMatch: 'full',

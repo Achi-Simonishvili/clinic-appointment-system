@@ -1,0 +1,76 @@
+<div class="records-wrapper">
+  <div class="page-header">
+    <h1 class="page-title">Medical Records</h1>
+    <p class="page-subtitle">Create and manage patient visit notes and diagnoses</p>
+  </div>
+
+  <div class="content-grid">
+    <div class="form-card">
+      <h2 class="card-title">New record</h2>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="record-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Appointment</mat-label>
+          <mat-select
+            formControlName="appointmentId"
+            (selectionChange)="onAppointmentChange($event.value)"
+          >
+            <mat-option *ngFor="let a of appointments" [value]="a.id">
+              {{ a.patientName }} — {{ a.appointmentDate | date: 'mediumDate' }} {{ a.startTime }}
+            </mat-option>
+          </mat-select>
+          <mat-error>Appointment is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Diagnosis</mat-label>
+          <input matInput formControlName="diagnosis" />
+          <mat-error>Diagnosis is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Symptoms</mat-label>
+          <textarea matInput formControlName="symptoms" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <button mat-flat-button class="submit-btn" type="submit" [disabled]="submitting">
+          <mat-spinner diameter="18" *ngIf="submitting"></mat-spinner>
+          <span *ngIf="!submitting">Save record</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="records-list">
+      <h2 class="card-title">Recent records</h2>
+
+      <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+
+      <div class="empty-state" *ngIf="!loading && records.length === 0">
+        <mat-icon>description</mat-icon>
+        <p>No records yet</p>
+      </div>
+
+      <div class="record-card" *ngFor="let record of records">
+        <div class="record-header">
+          <div class="record-patient">{{ record.patientName }}</div>
+          <div class="record-date">{{ record.createdAt | date: 'mediumDate' }}</div>
+        </div>
+        <div class="record-diagnosis">{{ record.diagnosis }}</div>
+        <div class="record-detail" *ngIf="record.symptoms">
+          <span class="detail-label">Symptoms:</span> {{ record.symptoms }}
+        </div>
+        <div class="record-detail" *ngIf="record.notes">
+          <span class="detail-label">Notes:</span> {{ record.notes }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
